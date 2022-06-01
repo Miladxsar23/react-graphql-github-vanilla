@@ -7,6 +7,7 @@ import {
   resolveIssueQuery,
   resolveAddStarMutation,
   resolveRemoveStarMutation,
+  resolveAddReactionMutation,
 } from "./helpers";
 class App extends Component {
   state = {
@@ -59,6 +60,11 @@ class App extends Component {
       this.setState(resolveRemoveStarMutation(mutationResult));
     });
   };
+  onAddReaction = (issueId, content) => {
+    api.addReactionToIssue(issueId, content).then((mutationResult) => {
+      this.setState(resolveAddReactionMutation(mutationResult, issueId));
+    });
+  };
   render() {
     const { error, organization, fetchErrors } = this.state;
     return (
@@ -85,6 +91,7 @@ class App extends Component {
               onFetchMoreIssues={this.onFetchMoreIssues}
               onAddStar={this.onAddStar}
               onRemoveStar={this.onRemoveStar}
+              onAddReaction={this.onAddReaction}
             />
           </div>
         ) : (

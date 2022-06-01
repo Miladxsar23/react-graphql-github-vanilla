@@ -60,6 +60,7 @@ function getIssueFromRepository(organization, repository, endCursor) {
               title
               url
               state
+              viewerCanReact
               author {
                 avatarUrl
               }
@@ -116,10 +117,28 @@ function removeStartFromRepository(repositoryId) {
   return sendQuery(query, variables);
 }
 
+function addReactionToIssue(issueId, content) {
+  const query = `
+    mutation AddReactionToIssue
+    ($issueId : ID!, $content : ReactionContent!) {
+      addReaction(input : {subjectId : $issueId, content : $content}) {
+        reaction {
+          id
+          content
+
+        }
+      }
+    }
+  `;
+  const variables = { issueId, content };
+  return sendQuery(query, variables);
+}
+
 export {
   getOrganization,
   getRepository,
   getIssueFromRepository,
   addStarToRepository,
   removeStartFromRepository,
+  addReactionToIssue
 };

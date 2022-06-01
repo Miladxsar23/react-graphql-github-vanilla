@@ -6,6 +6,7 @@ const Organization = ({
   onFetchMoreIssues,
   onAddStar,
   onRemoveStar,
+  onAddReaction
 }) => {
   return (
     <div className="Organization">
@@ -20,6 +21,7 @@ const Organization = ({
             onFetchMoreIssues={onFetchMoreIssues}
             onAddStar={onAddStar}
             onRemoveStar={onRemoveStar}
+            onAddReaction={onAddReaction}
           />
         </div>
       )}

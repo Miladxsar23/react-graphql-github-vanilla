@@ -4,7 +4,7 @@ import {generateFontAwesomeName} from '../../helpers'
 const ReactionItem = ({content}) => { 
     const {name, color} = generateFontAwesomeName(content)
     return (
-        <FontAwesomeIcon style={{color}} icon={name} />
+        <FontAwesomeIcon style={{color, fontSize : 22}} icon={name} />
     )
 }
 

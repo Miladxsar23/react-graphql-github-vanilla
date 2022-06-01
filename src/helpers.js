@@ -57,8 +57,8 @@ const resolveIssueQuery = (queryResult, endCursor) => (state) => {
 };
 
 const resolveAddStarMutation = (mutationResult) => (state) => {
-  const { viewerHasStarred  } = mutationResult.data.data.addStar.starrable;
-  const {totalCount} = state.organization.repository.stargazers
+  const { viewerHasStarred } = mutationResult.data.data.addStar.starrable;
+  const { totalCount } = state.organization.repository.stargazers;
   return {
     ...state,
     organization: {
@@ -66,16 +66,16 @@ const resolveAddStarMutation = (mutationResult) => (state) => {
       repository: {
         ...state.organization.repository,
         viewerHasStarred: viewerHasStarred,
-        stargazers : {
-          totalCount : totalCount + 1
-        }
+        stargazers: {
+          totalCount: totalCount + 1,
+        },
       },
     },
   };
 };
 const resolveRemoveStarMutation = (mutationResult) => (state) => {
   const { viewerHasStarred } = mutationResult.data.data.removeStar.starrable;
-  const {totalCount} = state.organization.repository.stargazers
+  const { totalCount } = state.organization.repository.stargazers;
   return {
     ...state,
     organization: {
@@ -83,9 +83,42 @@ const resolveRemoveStarMutation = (mutationResult) => (state) => {
       repository: {
         ...state.organization.repository,
         viewerHasStarred: viewerHasStarred,
-        stargazers : {
-          totalCount : totalCount - 1
-        }
+        stargazers: {
+          totalCount: totalCount - 1,
+        },
+      },
+    },
+  };
+};
+
+const resolveAddReactionMutation = (mutationResult, issueId) => (state) => {
+  const { id, content } = mutationResult.data.data.addReaction.reaction;
+  const newReaction = {node : { id, content} };
+  const { edges: oldEdges } = state.organization.repository.issues;
+  const updatedEdges = oldEdges.map(({ node: issue }) => {
+    if (issue.id !== issueId) return issue;
+    const newReactions = [newReaction, ...issue.reactions.edges];
+    return {
+      ...issue,
+      reactions: {
+        ...issue.reactions,
+        edges: newReactions,
+      },
+    };
+  });
+  return {
+    ...state,
+    organization: {
+      ...state.organization,
+      repository: {
+        ...state.organization.repository,
+        issues: {
+          ...state.organization.repository.issues,
+          reactions: {
+            ...state.organization.repository.issues.reactions,
+            edges: updatedEdges,
+          },
+        },
       },
     },
   };
@@ -96,4 +129,5 @@ export {
   resolveIssueQuery,
   resolveAddStarMutation,
   resolveRemoveStarMutation,
+  resolveAddReactionMutation
 };

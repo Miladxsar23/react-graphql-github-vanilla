@@ -6,6 +6,7 @@ const Repository = ({
   onFetchMoreIssues,
   onAddStar,
   onRemoveStar,
+  onAddReaction,
 }) => {
   const { viewerHasStarred, id, stargazers } = repository;
   return (
@@ -17,7 +18,7 @@ const Repository = ({
         onAddStar={onAddStar}
         onRemoveStar={onRemoveStar}
       />
-      <IssueTable issues={repository.issues} />
+      <IssueTable issues={repository.issues} onAddReaction={onAddReaction} />
       {repository.issues.pageInfo.hasNextPage && (
         <button onClick={onFetchMoreIssues} className="btn btn-primary">
           More
