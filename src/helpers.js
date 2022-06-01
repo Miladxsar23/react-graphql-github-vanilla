@@ -93,19 +93,23 @@ const resolveRemoveStarMutation = (mutationResult) => (state) => {
 
 const resolveAddReactionMutation = (mutationResult, issueId) => (state) => {
   const { id, content } = mutationResult.data.data.addReaction.reaction;
-  const newReaction = {node : { id, content} };
+  const newReaction = { node: { id, content } };
   const { edges: oldEdges } = state.organization.repository.issues;
-  const updatedEdges = oldEdges.map(({ node: issue }) => {
-    if (issue.id !== issueId) return issue;
-    const newReactions = [newReaction, ...issue.reactions.edges];
+  const updatedEdges = oldEdges.map(({ node }) => {
+    if (node.id !== issueId) return { node };
+    const newReactions = [newReaction, ...node.reactions.edges];
     return {
-      ...issue,
-      reactions: {
-        ...issue.reactions,
-        edges: newReactions,
+      node: {
+        ...node,
+        reactions: {
+          ...node.reactions,
+          edges: newReactions,
+          totalCount: node.reactions.totalCount + 1,
+        },
       },
     };
   });
+  console.log(updatedEdges);
   return {
     ...state,
     organization: {
@@ -114,10 +118,7 @@ const resolveAddReactionMutation = (mutationResult, issueId) => (state) => {
         ...state.organization.repository,
         issues: {
           ...state.organization.repository.issues,
-          reactions: {
-            ...state.organization.repository.issues.reactions,
-            edges: updatedEdges,
-          },
+          edges: updatedEdges,
         },
       },
     },
@@ -129,5 +130,5 @@ export {
   resolveIssueQuery,
   resolveAddStarMutation,
   resolveRemoveStarMutation,
-  resolveAddReactionMutation
+  resolveAddReactionMutation,
 };
