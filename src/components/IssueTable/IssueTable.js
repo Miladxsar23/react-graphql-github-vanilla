@@ -1,8 +1,8 @@
 import * as React from "react";
 import ReactionList from "../ReactionList/ReactionList";
-const IssueTable = ({ issues, onAddReaction }) => {
+const IssueTable = ({ issues, onAddReaction, organizationName, repositoryName }) => {
   const rows = issues.edges.map(({ node }, idx) => {
-    const { id, title, url, author, reactions, viewerCanReact } = node;
+    const { id, number, title, url, author, reactions, viewerCanReact } = node;
     return (
       <tr key={id}>
         <td>{idx + 1}</td>
@@ -20,8 +20,11 @@ const IssueTable = ({ issues, onAddReaction }) => {
         </td>
         <td className="p-3">
           <ReactionList
+            organizationName={organizationName}
+            repositoryName={repositoryName}
             reactions={reactions}
             issueId={id}
+            issueNumber={number}
             onAddReaction={onAddReaction}
             viewerCanReact={viewerCanReact}
           />

@@ -2,11 +2,15 @@ import * as React from "react";
 import AddReaction from "../AddReaction/AddReaction";
 import ReactionItem from "../ReactionItem/ReactionItem";
 const ReactionList = ({
+  organizationName, 
+  repositoryName,
   reactions,
   issueId,
+  issueNumber,
   onAddReaction,
   viewerCanReact,
 }) => {
+
   const { totalCount } = reactions;
   const reactionListEl = reactions.edges.map(({ node }) => {
     const { content, id } = node;
@@ -26,7 +30,11 @@ const ReactionList = ({
         </span>
       </div>
       <AddReaction
+        organizationName={organizationName}
+        totalCount={totalCount}
+        repositoryName={repositoryName}
         issueId={issueId}
+        issueNumber={issueNumber}
         onAddReaction={onAddReaction}
         viewerCanReact={viewerCanReact}
       />

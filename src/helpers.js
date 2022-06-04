@@ -92,6 +92,10 @@ const resolveRemoveStarMutation = (mutationResult) => (state) => {
 };
 
 const resolveAddReactionMutation = (mutationResult, issueId) => (state) => {
+  if (!mutationResult) {
+    alert("you reaction before");
+    return state
+  }
   const { id, content } = mutationResult.data.data.addReaction.reaction;
   const newReaction = { node: { id, content } };
   const { edges: oldEdges } = state.organization.repository.issues;
@@ -109,7 +113,6 @@ const resolveAddReactionMutation = (mutationResult, issueId) => (state) => {
       },
     };
   });
-  console.log(updatedEdges);
   return {
     ...state,
     organization: {

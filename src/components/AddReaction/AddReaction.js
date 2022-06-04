@@ -9,7 +9,15 @@ const REACTION_CONTENTS = [
   "ROCKET",
   "EYES",
 ];
-const AddReaction = ({ issueId, onAddReaction, viewerCanReact }) => {
+const AddReaction = ({
+  organizationName,
+  repositoryName,
+  issueId,
+  issueNumber,
+  onAddReaction,
+  viewerCanReact,
+  totalCount,
+}) => {
   const [reaction, setReaction] = useState("LAUGH");
   const options = REACTION_CONTENTS.map((content) => {
     return (
@@ -26,9 +34,16 @@ const AddReaction = ({ issueId, onAddReaction, viewerCanReact }) => {
         const value = evt.target.value;
         if (viewerCanReact) {
           setReaction(value);
-          onAddReaction(issueId, value);
-        }else {
-            console.log("this issue has read only now")
+          onAddReaction(
+            organizationName,
+            repositoryName,
+            issueId,
+            issueNumber,
+            totalCount,
+            value
+          );
+        } else {
+          console.log("this issue has read only now");
         }
       }}
     >

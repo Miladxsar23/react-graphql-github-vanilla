@@ -60,10 +60,26 @@ class App extends Component {
       this.setState(resolveRemoveStarMutation(mutationResult));
     });
   };
-  onAddReaction = (issueId, content) => {
-    api.addReactionToIssue(issueId, content).then((mutationResult) => {
-      this.setState(resolveAddReactionMutation(mutationResult, issueId));
-    });
+  onAddReaction = (
+    organization,
+    repository,
+    issueId,
+    issueNumber,
+    totalCount,
+    content
+  ) => {
+    api
+      .addReaction(
+        organization,
+        repository,
+        issueId,
+        issueNumber,
+        totalCount,
+        content
+      )
+      .then((mutationResult) => {
+        this.setState(resolveAddReactionMutation(mutationResult, issueId));
+      });
   };
   render() {
     const { error, organization, fetchErrors } = this.state;
@@ -87,6 +103,8 @@ class App extends Component {
             </div>
             <Organization
               organization={organization}
+              organizationName={this.state.address.organization}
+              repositoryName={this.state.address.repository}
               errors={fetchErrors}
               onFetchMoreIssues={this.onFetchMoreIssues}
               onAddStar={this.onAddStar}

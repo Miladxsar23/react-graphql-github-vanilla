@@ -57,6 +57,7 @@ function getIssueFromRepository(organization, repository, endCursor) {
           edges {
             node {
               id
+              number
               title
               url
               state
@@ -85,6 +86,43 @@ function getIssueFromRepository(organization, repository, endCursor) {
     }
   }`;
   const variables = { organization, repository, first: 5, endCursor };
+  return sendQuery(query, variables);
+}
+
+function getReactionsWithContent(
+  organization,
+  repository,
+  issueNumber,
+  count,
+  content
+) {
+  const query = `
+    query GetSpecialReactions
+    ($organization: String!, $repository: String!, $count: Int!, $content: ReactionContent!, $number: Int!) {
+      organization(login: $organization) {
+        repository(name: $repository) {
+          issue(number: $number) {
+            reactions(last: $count, content: $content) {
+              edges {
+                node {
+                  id
+                  content
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    `;
+  const variables = {
+    organization,
+    repository,
+    number: issueNumber,
+    count: Math.min(100, count),
+    content: content,
+  };
+
   return sendQuery(query, variables);
 }
 
@@ -134,11 +172,41 @@ function addReactionToIssue(issueId, content) {
   return sendQuery(query, variables);
 }
 
+async function addReaction(
+  organization,
+  repository,
+  issueId,
+  issueNumber,
+  totalCount,
+  content
+) {
+  try {
+    const getReactionsData = await getReactionsWithContent(
+      organization,
+      repository,
+      issueNumber,
+      totalCount,
+      content
+    );
+    const addReactionData = await addReactionToIssue(issueId, content);
+    const { edges: reactions } =
+      getReactionsData.data.data.organization.repository.issue.reactions;
+    const { id } = addReactionData.data.data.addReaction.reaction;
+    if (!reactions.some(({node}) => node.id === id)) {
+      return addReactionData;
+    } else return null;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export {
   getOrganization,
   getRepository,
   getIssueFromRepository,
   addStarToRepository,
   removeStartFromRepository,
-  addReactionToIssue
+  addReactionToIssue,
+  getReactionsWithContent,
+  addReaction,
 };

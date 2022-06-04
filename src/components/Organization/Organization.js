@@ -2,6 +2,8 @@ import React from "react";
 import Repository from "../Repository/Repository";
 const Organization = ({
   organization,
+  organizationName,
+  repositoryName,
   errors,
   onFetchMoreIssues,
   onAddStar,
@@ -17,6 +19,8 @@ const Organization = ({
       ) : (
         <div className="text-center">
           <Repository
+            organizationName={organizationName}
+            repositoryName={repositoryName}
             repository={organization.repository}
             onFetchMoreIssues={onFetchMoreIssues}
             onAddStar={onAddStar}
